@@ -1,28 +1,39 @@
 function checkDate(timestamp) {
-    var day = new Date(timestamp * 1000).getDate();
-    var month = new Date(timestamp * 1000).getMonth();
-    var year = new Date(timestamp * 1000).getFullYear();
-    var hour = new Date(timestamp * 1000).getHours();
+  // коэффициент для перевода секунд в миллисекунды
+  const RATIO_TO_MS = 1000;
 
-    const current_Date = new Date(Date.now());
-    const current_day = current_Date.getDate();
-    const current_month = current_Date.getMonth() + 1;
-    const currentYear = current_Date.getFullYear();
+  // текущая дата
+  const currentDate = new Date();
 
-    let isSameDate = false;
+  // Получение даты из timestamp, который был в секундах
+  const timestampInMs = timestamp * RATIO_TO_MS;
+  const dateFromTimestamp = new Date(timestampInMs);
 
-    if (year == currentYear) {
-        if (month == current_month) {
-            if (day == current_day) {
-                isSameDate = true;
-            } else {
-                isSameDate = false;
-            }
-        }
-    }
+  // UTC применяется для избежания ошибки нахождения в разных часовых поясах.
+  // Получение текущих года, месяца, и дня
+  const currentYear = currentDate.getUTCFullYear();
+  const currentMonth = currentDate.getUTCMonth();
+  const currentDay = currentDate.getUTCDay();
 
-    return {
-        isSameDate: isSameDate,
-        dayPeriod: hour > 11 ? 'pm' : 'am'
-    }
+  // Получение года, месяца, дня и часов из timestamp
+  const yearFromTimestamp = dateFromTimestamp.getUTCFullYear();
+  const monthFromTimestamp = dateFromTimestamp.getUTCMonth();
+  const dayFromTimestamp = dateFromTimestamp.getUTCDay();
+  const hoursFromTimestamp = dateFromTimestamp.getUTCHours();
+
+  let isSameDate = false;
+
+  // проверка равенства дат
+  if (
+    currentYear === yearFromTimestamp &&
+    currentMonth === monthFromTimestamp &&
+    currentDay === dayFromTimestamp
+  ) {
+    isSameDate = true;
+  }
+
+  return {
+    isSameDate: isSameDate,
+    dayPeriod: hoursFromTimestamp >= 12 ? "pm" : "am",
+  };
 }
